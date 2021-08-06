@@ -32,20 +32,20 @@ data "terraform_remote_state" "vnet" {
 
 resource "azurerm_network_interface" "nic" {
   name                = "${var.prefix}-nic"
-  location            = data.terraform_remote_state.vnet.output.location
-  resource_group_name = data.terraform_remote_state.vnet.output.rg
+  location            = data.terraform_remote_state.vnet.outputs.location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.rg
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = data.terraform_remote_state.vnet.output.subnet_info.id
+    subnet_id                     = data.terraform_remote_state.vnet.outputs.subnet_info.id
     private_ip_address_allocation = "Dynamic"
   }
 }
 
-resource "azurerm_linux_virtual_machine" "example" {
+resource "azurerm_linux_virtual_machine" "linux" {
   name                = "${var.prefix}-linux-machine"
-  resource_group_name = data.terraform_remote_state.vnet.output.rg
-  location            = data.terraform_remote_state.vnet.output.location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.rg
+  location            = data.terraform_remote_state.vnet.outputs.location
   size                = "Standard_F2"
   admin_username      = var.username
   admin_password = var.password
