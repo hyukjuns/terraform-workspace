@@ -7,13 +7,13 @@ terraform {
     }
   }
   
-  backend "remote" {
-    organization = "hyukjun-organization"
+  // backend "remote" {
+  //   organization = "hyukjun-organization"
 
-    workspaces {
-      name = "workspace-vcs"
-    }
-  }
+  //   workspaces {
+  //     name = "workspace-vcs"
+  //   }
+  // }
 }
 provider "azurerm" {
     features{}
