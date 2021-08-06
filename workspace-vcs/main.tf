@@ -6,14 +6,7 @@ terraform {
       version = "2.71.0"
     }
   }
-  
-  // backend "remote" {
-  //   organization = "hyukjun-organization"
 
-  //   workspaces {
-  //     name = "workspace-vcs"
-  //   }
-  // }
 }
 provider "azurerm" {
     features{}
