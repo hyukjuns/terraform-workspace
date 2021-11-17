@@ -7,3 +7,5 @@
         - Windows
     - NIC
     - Public IP
+### Remote state
+    - Network Workspace -> Subnet ID-> Compute Workspace
