@@ -3,15 +3,15 @@ terraform {
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
-      version = "2.71.0"
+      version = "~> 2.80"
     }
   }
   
   backend "remote" {
-    organization = "hyukjun-organization"
+    organization = "ORG"
 
     workspaces {
-      name = "workspace-cli"
+      name = "WORKSPACE"
     }
   }
 }
