@@ -13,9 +13,5 @@ variable "location" {
 }
 
 # account
-variable "admin_username" {
-  default = "azureuser"
-}
-variable "admin_password" {
-  default = "dkagh1.dakgh1."
-}
+variable "admin_username" {}
+variable "admin_password" {}

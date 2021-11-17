@@ -20,7 +20,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "network" {
-  name     = "${var.prefix}-vnet-${var.suffix}"
+  name     = "${var.prefix}-network-${var.suffix}"
   location = var.location
 }
 
