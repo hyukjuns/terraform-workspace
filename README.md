@@ -1,4 +1,4 @@
-# Terraform Cloud for biz(ent)
+# Terraform Cloud for Biz(Ent)
 ### Network Workspace
     - Virtual Network, Subnet
 ### Compute Workspace
