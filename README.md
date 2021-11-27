@@ -9,7 +9,8 @@ Terraform OSS, Cloud, Module에 관한 개인 저장소 입니다.
 - kubernetes
 - helm
 ### Workloads
-[Details](./workloads) in Azure and Kubernetes Cluster
+- [Details](./workloads) in Azure and Others
+- [Details](https://github.com/hyukjuns/k8s-aks-tf) in Kubernetes Cluster(with AKS) and Helm
 ## Terraform Cloud for Biz(Ent)
 테라폼 클라우드를 다양하게 사용중 입니다.
 ### Network Workspace

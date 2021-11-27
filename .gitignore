@@ -1,4 +1,7 @@
-# ignores
-**/*.hcl
-**/*.tfstate
+**/*.terraform.tfstate
 **/*.terraform
+**/*.tfvars
+**/*.tfstate
+**/*.tfstate.backup
+**/*.terraform.lock.hcl
+**/*.terraform.lock.info
