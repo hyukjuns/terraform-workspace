@@ -12,7 +12,7 @@ variable "prefix" {
 }
 
 variable "tags" {
-  type = map
+  type = map(any)
 
   default = {
     Environment = "Terraform GS"
@@ -22,8 +22,8 @@ variable "tags" {
 
 variable "sku" {
   default = {
-    westus2 = "16.04-LTS"
-    eastus  = "18.04-LTS"
+    westus2      = "16.04-LTS"
+    eastus       = "18.04-LTS"
     koreacentral = "18.04-LTS"
   }
 }

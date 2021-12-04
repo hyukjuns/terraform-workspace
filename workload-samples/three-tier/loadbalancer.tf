@@ -2,10 +2,10 @@ resource "azurerm_lb" "dev_business_lb" {
   name                = "${var.prefix}-business-lb"
   location            = var.location
   resource_group_name = azurerm_resource_group.web_rg.name
-  sku = "Basic"
+  sku                 = "Basic"
   frontend_ip_configuration {
-    name                 = "business-lb-private-ip"
-    subnet_id = azurerm_subnet.dev_business_subnet.id
+    name                          = "business-lb-private-ip"
+    subnet_id                     = azurerm_subnet.dev_business_subnet.id
     private_ip_address_allocation = "Dynamic"
   }
 }

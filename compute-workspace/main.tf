@@ -2,11 +2,11 @@ terraform {
 
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = "~> 2.80"
     }
   }
-  
+
   backend "remote" {
     organization = "cloocus-mspdevops"
 
@@ -16,7 +16,7 @@ terraform {
   }
 }
 provider "azurerm" {
-  features{}
+  features {}
 }
 
 # network workspace 
@@ -51,7 +51,7 @@ resource "azurerm_public_ip" "linux_01" {
   name                = "${var.prefix}-pip-${var.suffix}"
   resource_group_name = azurerm_resource_group.vm.name
   location            = azurerm_resource_group.vm.location
-  sku = "Standard"
+  sku                 = "Standard"
   allocation_method   = "Static"
 }
 

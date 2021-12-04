@@ -85,7 +85,7 @@ resource "azurerm_public_ip" "linux_server_pip" {
   location            = azurerm_resource_group.rg.location
   allocation_method   = "Static"
   sku                 = "Standard"
-  availability_zone = "No-Zone"
+  availability_zone   = "No-Zone"
 }
 
 resource "azurerm_network_interface" "linux_server_nic" {

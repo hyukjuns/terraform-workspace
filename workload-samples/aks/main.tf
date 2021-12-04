@@ -38,7 +38,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   // automatic_channel_upgrade = "stable"
 
   # Basic
-  dns_prefix     = "${var.prefix}aks01"
+  dns_prefix = "${var.prefix}aks01"
   default_node_pool {
     name                = "default"
     type                = "VirtualMachineScaleSets"
@@ -51,7 +51,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     min_count           = 1
   }
   lifecycle {
-      ignore_changes = [default_node_pool[0].node_count]
+    ignore_changes = [default_node_pool[0].node_count]
   }
 
   # Network

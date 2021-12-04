@@ -1,22 +1,22 @@
 terraform {
   // 테라폼 버전 제한
   # required_version = "~> 0.14.1"
-  
+
   //프로바이더 버전 제한
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = ">= 2.46"
     }
   }
-  
+
   // 원격 백앤드 정보 설정
-   backend "remote" {
-     organization = "hyukjun-test"
-     workspaces {
-       name = "hyukjun-test-work2"
-     }
-   }
+  backend "remote" {
+    organization = "hyukjun-test"
+    workspaces {
+      name = "hyukjun-test-work2"
+    }
+  }
 }
 
 provider "azurerm" {
@@ -30,10 +30,10 @@ resource "azurerm_resource_group" "rg" {
 
 # Create a virtual network
 resource "azurerm_virtual_network" "vnet" {
-    name                = "myTFVnet"
-    address_space       = ["192.168.0.0/16"]
-    location            = var.location
-    resource_group_name = azurerm_resource_group.rg.name
+  name                = "myTFVnet"
+  address_space       = ["192.168.0.0/16"]
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
 }
 
 # Create subnet
@@ -58,11 +58,11 @@ resource "azurerm_network_security_group" "nsg" {
   name                = "myTFNSG"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
-  
+
   # 리소스 라이프 사이클 관리(삭제방지, 변경무시)
   lifecycle {
-      # prevent_destroy = true
-      # ignore_changes = ["security_rule"]
+    # prevent_destroy = true
+    # ignore_changes = ["security_rule"]
   }
   security_rule {
     name                       = "SSH"
@@ -75,7 +75,7 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-    security_rule {
+  security_rule {
     name                       = "RDP"
     priority                   = 1002
     direction                  = "Inbound"
@@ -90,9 +90,9 @@ resource "azurerm_network_security_group" "nsg" {
 
 # Create network interface
 resource "azurerm_network_interface" "nic" {
-  name                      = "myNIC"
-  location                  = var.location
-  resource_group_name       = azurerm_resource_group.rg.name
+  name                = "myNIC"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
 
   ip_configuration {
     name                          = "myNICConfg"
@@ -117,7 +117,7 @@ resource "azurerm_virtual_machine" "vm" {
     managed_disk_type = "Premium_LRS"
   }
 
-    storage_image_reference {
+  storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
     sku       = lookup(var.sku, var.location)

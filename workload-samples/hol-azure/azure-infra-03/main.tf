@@ -1,14 +1,14 @@
 terraform {
   # required_version = "~> 0.14.1"
-  
+
   # 프로바이더 버전
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = "~> 2.46.0"
     }
   }
-  
+
   # 원격 백앤드 정보 설정
   #  backend "remote" {
   #    .hol_3_rganization = "hyukjun-test"
@@ -26,7 +26,7 @@ provider "azurerm" {
 
 # Create Resource Group
 resource "azurerm_resource_group" "hol_3_rg" {
-  name = var.resourcegroup
+  name     = var.resourcegroup
   location = var.location
 }
 
@@ -155,15 +155,15 @@ resource "azurerm_subnet_network_security_group_association" "nsg_associate_02" 
 
 # Create Availability Set
 resource "azurerm_availability_set" "avset_01" {
-  name                = "${var.prefix}-avset_01"
-  location            = azurerm_resource_group.hol_3_rg.location
-  resource_group_name = azurerm_resource_group.hol_3_rg.name
+  name                        = "${var.prefix}-avset_01"
+  location                    = azurerm_resource_group.hol_3_rg.location
+  resource_group_name         = azurerm_resource_group.hol_3_rg.name
   platform_fault_domain_count = 2
 }
 resource "azurerm_availability_set" "avset_02" {
-  name                = "${var.prefix}-avset-02"
-  location            = azurerm_resource_group.hol_3_rg.location
-  resource_group_name = azurerm_resource_group.hol_3_rg.name
+  name                        = "${var.prefix}-avset-02"
+  location                    = azurerm_resource_group.hol_3_rg.location
+  resource_group_name         = azurerm_resource_group.hol_3_rg.name
   platform_fault_domain_count = 2
 }
 
@@ -234,9 +234,9 @@ resource "azurerm_windows_virtual_machine" "wvm_01" {
 
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
-    offer      = "WindowsServer"
-    sku        = "2016-Datacenter"
-    version    = "latest"
+    offer     = "WindowsServer"
+    sku       = "2016-Datacenter"
+    version   = "latest"
   }
 }
 resource "azurerm_windows_virtual_machine" "wvm_02" {
@@ -258,9 +258,9 @@ resource "azurerm_windows_virtual_machine" "wvm_02" {
 
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
-    offer      = "WindowsServer"
-    sku        = "2016-Datacenter"
-    version    = "latest"
+    offer     = "WindowsServer"
+    sku       = "2016-Datacenter"
+    version   = "latest"
   }
 }
 resource "azurerm_windows_virtual_machine" "wvm_03" {
@@ -282,9 +282,9 @@ resource "azurerm_windows_virtual_machine" "wvm_03" {
 
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
-    offer      = "WindowsServer"
-    sku        = "2016-Datacenter"
-    version    = "latest"
+    offer     = "WindowsServer"
+    sku       = "2016-Datacenter"
+    version   = "latest"
   }
 }
 resource "azurerm_windows_virtual_machine" "wvm_04" {
@@ -306,9 +306,9 @@ resource "azurerm_windows_virtual_machine" "wvm_04" {
 
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
-    offer      = "WindowsServer"
-    sku        = "2016-Datacenter"
-    version    = "latest"
+    offer     = "WindowsServer"
+    sku       = "2016-Datacenter"
+    version   = "latest"
   }
 }
 
@@ -381,7 +381,7 @@ resource "azurerm_lb" "intlb" {
 
   frontend_ip_configuration {
     name                          = "intlb-fip-config"
-    subnet_id = azurerm_subnet.subnet01.id
+    subnet_id                     = azurerm_subnet.subnet01.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -437,7 +437,7 @@ resource "azurerm_public_ip" "bastion_pip" {
   resource_group_name = azurerm_resource_group.hol_3_rg.name
   allocation_method   = "Static"
   sku                 = "Standard"
-  depends_on = [azurerm_resource_group.hol_3_rg]
+  depends_on          = [azurerm_resource_group.hol_3_rg]
 }
 
 resource "azurerm_bastion_host" "bastion" {
@@ -468,7 +468,7 @@ resource "azurerm_storage_account" "storage_account" {
 }
 
 resource "azurerm_storage_share" "fshare" {
-  name                 = .hol_3_rgshare"
+  name                 = "hol_3_rgshare"
   storage_account_name = azurerm_storage_account.storage_account.name
   quota                = 50
 }
