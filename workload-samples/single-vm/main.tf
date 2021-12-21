@@ -102,7 +102,7 @@ resource "azurerm_network_interface" "linux_server_nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "linux_server" {
-  name                = "${var.prefix}-ubuntu-server"
+  name                = "${var.prefix}-linux-server"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_F2"
