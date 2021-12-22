@@ -92,7 +92,7 @@ resource "azurerm_application_gateway" "appgw" {
 
   backend_address_pool {
     name         = local.backend_address_pool_name
-    // ip_addresses = ["10.10.10.1", "10.10.10.2"]
+    ip_addresses = [azurerm_linux_virtual_machine.linux_server.private_ip_address, azurerm_linux_virtual_machine.linux_server_02.private_ip_address]
   }
 
   backend_http_settings {
