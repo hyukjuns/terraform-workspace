@@ -1,6 +1,4 @@
 terraform {
-  // 테라폼 버전 제한
-  # required_version = "~> 0.14.1"
 
   //프로바이더 버전 제한
   required_providers {
