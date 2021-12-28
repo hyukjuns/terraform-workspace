@@ -1,3 +1,4 @@
+# Optional
 variable "prefix" {
     description = "prefix"
     default = ""
@@ -14,6 +15,8 @@ variable "admin_username" {
     description = "vm admin username"
     default = "az"
 }
+
+# Required
 variable "admin_password" {
     description = "vm admin username"
 }
