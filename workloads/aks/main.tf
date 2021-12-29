@@ -2,7 +2,15 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "2.81.0"
+      version = " ~> 2.80"
+    }
+  }
+  
+  cloud {
+    organization = "cloocus-mspdevops"
+
+    workspaces {
+      name = "hyukjnu-aks-workspace"
     }
   }
 }
@@ -11,34 +19,37 @@ provider "azurerm" {
   features {}
 }
 
-data "azurerm_resource_group" "aks" {
-  name = "k8s"
+resource "azurerm_resource_group" "aks" {
+  name = "rg-${var.resource_group_name}"
+  location = var.location
 }
+
 resource "azurerm_virtual_network" "aks" {
-  name                = "${var.prefix}-network"
-  location            = data.azurerm_resource_group.aks.location
-  resource_group_name = data.azurerm_resource_group.aks.name
+  name                = "${var.prefix}-virtual-network"
+  location            = azurerm_resource_group.aks.location
+  resource_group_name = azurerm_resource_group.aks.name
   address_space       = ["10.0.0.0/8"]
 }
 
 resource "azurerm_subnet" "aks" {
-  name                 = "azurecni"
+  name                 = "azurecni-subnet"
   virtual_network_name = azurerm_virtual_network.aks.name
-  resource_group_name  = data.azurerm_resource_group.aks.name
+  resource_group_name  = azurerm_resource_group.aks.name
   address_prefixes     = ["10.240.0.0/16"]
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "${var.prefix}-aks-01"
-  location            = data.azurerm_resource_group.aks.location
-  resource_group_name = data.azurerm_resource_group.aks.name
+  name                = "${var.prefix}-aks-${var.suffix}"
+  location            = azurerm_resource_group.aks.location
+  resource_group_name = azurerm_resource_group.aks.name
 
   # k8s version
-  kubernetes_version = "1.21.1"
-  // automatic_channel_upgrade = "stable"
+  kubernetes_version = var.k8s_version
+  automatic_channel_upgrade = "stable"
 
   # Basic
-  dns_prefix = "${var.prefix}aks01"
+  dns_prefix = "${var.prefix}aks${var.suffix}"
+
   default_node_pool {
     name                = "default"
     type                = "VirtualMachineScaleSets"
@@ -50,6 +61,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     max_count           = 3
     min_count           = 1
   }
+
   lifecycle {
     ignore_changes = [default_node_pool[0].node_count]
   }
@@ -70,6 +82,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   identity {
     type = "SystemAssigned"
   }
+
   role_based_access_control {
     enabled = true
   }
