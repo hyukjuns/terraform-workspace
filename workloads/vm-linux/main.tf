@@ -15,6 +15,7 @@ resource "azurerm_resource_group" "rg" {
   name     = "${var.prefix}-rg"
   location = "koreacentral"
 }
+
 resource "azurerm_network_security_group" "nsg" {
   name                = "${var.prefix}-nsg"
   location            = azurerm_resource_group.rg.location
@@ -32,24 +33,24 @@ resource "azurerm_network_security_group" "nsg" {
     destination_address_prefix = "*"
   }
   security_rule {
-    name                       = "rdp"
-    priority                   = 110
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "3389"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-  security_rule {
     name                       = "http"
-    priority                   = 120
+    priority                   = 200
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+  security_rule {
+    name                       = "https"
+    priority                   = 300
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -72,11 +73,10 @@ resource "azurerm_subnet_network_security_group_association" "nsg_association" {
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
-
-
 # linux Server
 resource "azurerm_public_ip" "linux_server_pip" {
-  name                = "${var.prefix}-linux-server-pip"
+  count = var.cnt
+  name                = "${var.prefix}-linux-server-pip-${count.index}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   allocation_method   = "Static"
@@ -85,26 +85,28 @@ resource "azurerm_public_ip" "linux_server_pip" {
 }
 
 resource "azurerm_network_interface" "linux_server_nic" {
-  name                = "${var.prefix}-linux-server-nic"
+  count = var.cnt
+  name                = "${var.prefix}-linux-server-nic-${count.index}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
 
   ip_configuration {
-    name                          = "${var.prefix}-linux-server-nic-ip-config"
+    name                          = "${var.prefix}-linux-server-nic-ip-config-${count.index}"
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.linux_server_pip.id
+    public_ip_address_id          = azurerm_public_ip.linux_server_pip[count.index].id
   }
 }
 
 resource "azurerm_linux_virtual_machine" "linux_server" {
-  name                = "${var.prefix}-linux-server"
+  count = var.cnt
+  name                = "${var.prefix}-linux-server-${count.index}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_F4s_v2"
 
   network_interface_ids = [
-    azurerm_network_interface.linux_server_nic.id,
+    azurerm_network_interface.linux_server_nic[count.index].id
   ]
 
   admin_username                  = var.admin_username

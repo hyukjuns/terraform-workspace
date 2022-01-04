@@ -1,3 +1,7 @@
+variable "cnt" {
+    description = "vm count"
+    default = "2"
+}
 variable "image" {
     description = "ubuntu or centos"
     type = map

@@ -34,6 +34,12 @@
         }
     }
     ```
+## Terraform Cloud tfvars
+Excution Mode
+- Remote
+    - *.auto.tfvars
+- Local
+    - terraform.tfvars
 ## Terraform Environment Variables
 - https://www.terraform.io/cli/config/environment-variables
 
