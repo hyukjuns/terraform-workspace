@@ -5,14 +5,6 @@ terraform {
       version = " ~> 2.80"
     }
   }
-  
-  cloud {
-    organization = "cloocus-mspdevops"
-
-    workspaces {
-      name = "hyukjnu-aks-workspace"
-    }
-  }
 }
 
 provider "azurerm" {

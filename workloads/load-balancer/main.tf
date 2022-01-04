@@ -5,14 +5,6 @@ terraform {
       version = " ~> 2.80"
     }
   }
-  backend "remote" {
-    hostname     = "app.terraform.io"
-    organization = "cloocus-mspdevops"
-
-    workspaces {
-      name = "hyukjnu-web-lb-workspace"
-    }
-  }
 }
 
 provider "azurerm" {

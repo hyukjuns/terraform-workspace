@@ -8,14 +8,6 @@ terraform {
       version = ">= 2.46"
     }
   }
-
-  # 원격 백앤드 정보 설정
-  backend "remote" {
-    organization = "hyukjun-demo"
-    workspaces {
-      name = "dev"
-    }
-  }
 }
 # Configure the Azure Provider
 provider "azurerm" {

@@ -1,3 +1,39 @@
+## Terraform Provider & Remote backend
+- Terraform Cloud
+    ```
+    terraform {
+        required_providers {
+                azurerm = {
+                source  = "hashicorp/azurerm"
+                version = "~> 2.89.0"
+            }
+        }
+        cloud {
+            organization = "ORGNAME"
+
+            workspaces {
+                name = "WORKSPACENAME"
+            }
+        }
+    }
+    ```
+- AzureRM
+    ```
+    terraform {
+        required_providers {
+            azurerm = {
+                source  = "hashicorp/azurerm"
+                version = "~> 2.89.0"
+            }
+        }
+        backend "azurerm" {
+            resource_group_name  = "RESOURCEGROUP"
+            storage_account_name = "STORAGEACCOUNT"
+            container_name       = "CONTAINER"
+            key                  = "FILENAME"
+        }
+    }
+    ```
 ## Terraform Environment Variables
 - https://www.terraform.io/cli/config/environment-variables
 

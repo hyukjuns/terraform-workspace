@@ -7,14 +7,6 @@ terraform {
       version = ">= 2.46"
     }
   }
-
-  // 원격 백앤드 정보 설정
-  backend "remote" {
-    organization = "hyukjun-test"
-    workspaces {
-      name = "hyukjun-test-work2"
-    }
-  }
 }
 
 provider "azurerm" {
