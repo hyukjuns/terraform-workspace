@@ -5,15 +5,18 @@ terraform {
       version = " ~> 2.80"
     }
   }
-  backend "azurerm" {
-    resource_group_name  = "rg-tf"
-    storage_account_name = "tfsac001"
-    container_name       = "tfstate"
-    key                  = "vm.linux.windows.tfstate"
+  backend "remote" {
+    hostname     = "app.terraform.io"
+    organization = "cloocus-mspdevops"
+
+    workspaces {
+      name = "hyukjnu-single-workspace"
+    }
   }
 }
 
 provider "azurerm" {
+  # Configuration options
   features {}
 }
 
@@ -21,6 +24,7 @@ resource "azurerm_resource_group" "rg" {
   name     = "${var.prefix}-rg"
   location = "koreacentral"
 }
+
 resource "azurerm_network_security_group" "nsg" {
   name                = "${var.prefix}-nsg"
   location            = azurerm_resource_group.rg.location
@@ -78,9 +82,15 @@ resource "azurerm_subnet_network_security_group_association" "nsg_association" {
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
+resource "azurerm_availability_set" "single" {
+  name                = "single-avset"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  platform_fault_domain_count = 2
+  platform_update_domain_count = 5
+}
 
-
-# linux Server
+# linux Server 01
 resource "azurerm_public_ip" "linux_server_pip" {
   name                = "${var.prefix}-linux-server-pip"
   resource_group_name = azurerm_resource_group.rg.name
@@ -108,6 +118,7 @@ resource "azurerm_linux_virtual_machine" "linux_server" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_F4s_v2"
+  availability_set_id = azurerm_availability_set.single.id
 
   network_interface_ids = [
     azurerm_network_interface.linux_server_nic.id,
@@ -127,5 +138,54 @@ resource "azurerm_linux_virtual_machine" "linux_server" {
     offer     = var.image.offer
     sku       = var.image.sku
     version   = var.image.version
+  }
+}
+
+# window server
+resource "azurerm_public_ip" "windows_server_pip" {
+  name                = "${var.prefix}-windows-server-pip"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  availability_zone = "No-Zone"
+}
+
+resource "azurerm_network_interface" "windows_server_nic" {
+  name                = "${var.prefix}-windows-server-nic"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.windows_server_pip.id
+  }
+}
+
+resource "azurerm_windows_virtual_machine" "windows_server" {
+  name                = "${var.prefix}-win-server"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  size                = "Standard_F4s_v2"
+  availability_set_id = azurerm_availability_set.single.id
+
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
+  network_interface_ids = [
+    azurerm_network_interface.windows_server_nic.id,
+  ]
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2019-Datacenter"
+    version   = "latest"
   }
 }
