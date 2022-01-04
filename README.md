@@ -13,10 +13,10 @@ Terraform OSS, Cloud, Module에 관한 개인 저장소 입니다.
          terraform {
             backend "remote" {
                hostname     = "app.terraform.io"
-               organization = "cloocus-mspdevops"
+               organization = "ORGNAME"
 
                workspaces {
-                  name = "hyukjnu-single-workspace"
+                  name = "WORKSPACENAME"
                }
             }
          }
@@ -24,10 +24,10 @@ Terraform OSS, Cloud, Module에 관한 개인 저장소 입니다.
          >= 1.1.0
          terraform {
             cloud {
-               organization = "cloocus-mspdevops"
+               organization = "ORGNAME"
 
                workspaces {
-                  name = "hyukjnu-aks-workspace"
+                  name = "WORKSPACENAME"
                }
             }
          }
