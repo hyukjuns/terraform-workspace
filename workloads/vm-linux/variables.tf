@@ -1,6 +1,6 @@
 variable "cnt" {
     description = "vm count"
-    default = "2"
+    default = "3"
 }
 variable "image" {
     description = "ubuntu or centos"
