@@ -5,6 +5,13 @@ terraform {
       version = " ~> 2.80"
     }
   }
+    cloud {
+      organization = "cloocus-mspdevops"
+
+      workspaces {
+          name = "hyukjun-web-lb-workspace"
+      }
+  }
 }
 
 provider "azurerm" {
@@ -23,7 +30,7 @@ resource "azurerm_network_security_group" "nsg" {
 
   security_rule {
     name                       = "ssh"
-    priority                   = 100
+    priority                   = 1000
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
