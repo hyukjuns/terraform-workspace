@@ -5,6 +5,13 @@ terraform {
       version = " ~> 2.80"
     }
   }
+  cloud {
+      organization = "cloocus-mspdevops"
+
+      workspaces {
+          name = "hyukjun-aks-workspace"
+      }
+  }
 }
 
 provider "azurerm" {
@@ -94,7 +101,17 @@ resource "azurerm_kubernetes_cluster" "aks" {
       enabled = false
     }
     oms_agent {
-      enabled = false
+      enabled = true
+      log_analytics_workspace_id = azurerm_log_analytics_workspace.aks.id
     }
   }
+}
+
+# log analytics for container insight
+resource "azurerm_log_analytics_workspace" "aks" {
+  name                = "aks-la-workspace-01"
+  location            = azurerm_resource_group.aks.location
+  resource_group_name = azurerm_resource_group.aks.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
 }
