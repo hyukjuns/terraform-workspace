@@ -27,7 +27,7 @@ resource "azurerm_resource_group" "network" {
 # Network
 module "network" {
   source                  = "app.terraform.io/cloocus-mspdevops/network/azurerm"
-  version                 = "1.0.0"
+  version                 = "1.0.1"
   resource_group_name     = azurerm_resource_group.network.name
   location                = azurerm_resource_group.network.location
   vnet_name               = "${var.prefix}-vnet-${var.suffix}"
@@ -39,5 +39,3 @@ module "network" {
     azurerm_resource_group.network
   ]
 }
-# NSG
-# Public ip
