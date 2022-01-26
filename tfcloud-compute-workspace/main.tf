@@ -44,7 +44,7 @@ resource "azurerm_network_interface" "linux_01" {
     name                          = "internal"
     subnet_id                     = data.terraform_remote_state.network.outputs.subnet_dev_01_id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = azurerm_public_ip.id
+    public_ip_address_id = azurerm_public_ip.linux_01.id
   }
 }
 
