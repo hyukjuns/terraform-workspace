@@ -43,8 +43,8 @@ module "network" {
 module "nsg" {
   source              = "app.terraform.io/cloocus-mspdevops/nsg/azurerm"
   version             = "1.0.1"
-  resource_group_name = azurerm_resource_group.module.name
-  location            = azurerm_resource_group.module.location
+  resource_group_name = azurerm_resource_group.network.name
+  location            = azurerm_resource_group.network.location
   nsg_name            = "${var.prefix}-nsg"
 
   rules = [
