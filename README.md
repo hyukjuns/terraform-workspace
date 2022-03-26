@@ -1,4 +1,4 @@
-# Terraform Workloads
+# Terraform
 Terraform OSS, Cloud, Module에 관한 개인 저장소 입니다.
 
 ### Terraform Version
