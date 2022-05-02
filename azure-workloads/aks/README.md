@@ -8,3 +8,6 @@
 ```
 export TF_ARM_AKS_KUBE_CONFIGS_SENSITIVE=true
 ```
+
+### Provider Change Log
+- azurerm 2.6.0 -> 3.4.0
