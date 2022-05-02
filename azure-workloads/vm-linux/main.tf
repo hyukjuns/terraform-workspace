@@ -5,13 +5,13 @@ terraform {
       version = " ~> 2.80"
     }
   }
-    cloud {
-      organization = "cloocus-mspdevops"
+  //   cloud {
+  //     organization = "cloocus-mspdevops"
 
-      workspaces {
-          name = "hyukjun-web-lb-workspace"
-      }
-  }
+  //     workspaces {
+  //         name = "hyukjun-web-lb-workspace"
+  //     }
+  // }
 }
 
 provider "azurerm" {

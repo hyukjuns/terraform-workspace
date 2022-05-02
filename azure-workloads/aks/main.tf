@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = " ~> 2.80"
+      version = " ~> 3.4.0"
     }
   }
 }
@@ -12,7 +12,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "aks" {
-  name = "rg-${var.resource_group_name}"
+  name     = "rg-${var.resource_group_name}"
   location = var.location
 }
 
@@ -36,7 +36,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = azurerm_resource_group.aks.name
 
   # k8s version
-  kubernetes_version = var.k8s_version
+  kubernetes_version        = var.k8s_version
   automatic_channel_upgrade = "stable"
 
   # Basic
@@ -45,7 +45,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   default_node_pool {
     name                = "default"
     type                = "VirtualMachineScaleSets"
-    availability_zones  = [1, 2, 3]
+    zones               = [1, 2, 3]
     node_count          = 3
     vm_size             = "Standard_D2_v2"
     vnet_subnet_id      = azurerm_subnet.aks.id
@@ -67,7 +67,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     dns_service_ip     = "10.0.0.10"
     docker_bridge_cidr = "172.17.0.1/16"
     outbound_type      = "loadBalancer"
-    load_balancer_sku  = "Standard"
+    load_balancer_sku  = "standard"
   }
 
   # Identity
@@ -75,28 +75,33 @@ resource "azurerm_kubernetes_cluster" "aks" {
     type = "SystemAssigned"
   }
 
-  role_based_access_control {
-    enabled = true
-  }
+  # below deprecated
+  // role_based_access_control {
+  //   enabled = true
+  // }
 
   # Integration
-  addon_profile {
-    aci_connector_linux {
-      enabled = false
-    }
-    azure_policy {
-      enabled = false
-    }
-    http_application_routing {
-      enabled = false
-    }
-    kube_dashboard {
-      enabled = false
-    }
-    oms_agent {
-      enabled = true
-      log_analytics_workspace_id = azurerm_log_analytics_workspace.aks.id
-    }
+  // addon_profile {
+  //   aci_connector_linux {
+  //     enabled = false
+  //   }
+  //   azure_policy {
+  //     enabled = false
+  //   }
+  //   http_application_routing {
+  //     enabled = false
+  //   }
+  //   kube_dashboard {
+  //     enabled = false
+  //   }
+  //   oms_agent {
+  //     enabled = true
+  //     log_analytics_workspace_id = azurerm_log_analytics_workspace.aks.id
+  //   }
+  // }
+
+  oms_agent {
+    log_analytics_workspace_id = azurerm_log_analytics_workspace.aks.id
   }
 }
 

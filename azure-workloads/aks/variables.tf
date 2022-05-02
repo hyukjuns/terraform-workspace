@@ -5,20 +5,20 @@ variable "prefix" {
 
 variable "suffix" {
   description = "suffix"
-  default = "nam"
+  default     = "nam"
 }
 
 variable "resource_group_name" {
   description = "resource group name"
-  default = "aks"
+  default     = "aks"
 }
 
 variable "location" {
   description = "location"
-  default = "koreacentral"
+  default     = "koreacentral"
 }
 
 variable "k8s_version" {
   description = "kubernetes version"
-  default = "1.21.7"
+  default     = "1.21.7"
 }
