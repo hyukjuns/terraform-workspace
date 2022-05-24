@@ -103,6 +103,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   oms_agent {
     log_analytics_workspace_id = azurerm_log_analytics_workspace.aks.id
   }
+  azure_policy_enabled = true
 }
 
 # log analytics for container insight
