@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = " ~> 2.80"
+      version = " ~> 3.9.0"
     }
   }
 }
@@ -43,7 +43,6 @@ resource "azurerm_public_ip" "appgw" {
   resource_group_name = azurerm_resource_group.appgw.name
   allocation_method   = "Static"
   sku                 = "Standard"
-  availability_zone   = "No-Zone"
 }
 
 # since these variables are re-used - a locals block makes this more maintainable
@@ -84,15 +83,22 @@ resource "azurerm_application_gateway" "appgw" {
 
   backend_address_pool {
     name         = local.backend_address_pool_name
-    ip_addresses = [azurerm_linux_virtual_machine.linux_server.private_ip_address, azurerm_linux_virtual_machine.linux_server_02.private_ip_address]
+    ip_addresses = [azurerm_linux_virtual_machine.linux_server.private_ip_address]
   }
 
   backend_http_settings {
     name                  = local.http_setting_name
-    cookie_based_affinity = "Enabled"
-    port                  = 80
     protocol              = "Http"
+    port                  = 8080
+    cookie_based_affinity = "Enabled"
+    affinity_cookie_name = "ApplicationGatewayAffinity"
+    connection_draining {
+      enabled = true
+      drain_timeout_sec = 60
+    }
     request_timeout       = 120
+    path = "/"  
+    host_name = var.agw_backend_hostname
   }
 
   http_listener {
@@ -100,6 +106,7 @@ resource "azurerm_application_gateway" "appgw" {
     frontend_ip_configuration_name = local.frontend_ip_configuration_name
     frontend_port_name             = local.frontend_port_name
     protocol                       = "Http"
+    host_name = var.agw_host_name
   }
 
   request_routing_rule {
@@ -108,5 +115,6 @@ resource "azurerm_application_gateway" "appgw" {
     http_listener_name         = local.listener_name
     backend_address_pool_name  = local.backend_address_pool_name
     backend_http_settings_name = local.http_setting_name
+    priority = 1
   }
 }

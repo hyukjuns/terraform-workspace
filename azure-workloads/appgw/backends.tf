@@ -36,6 +36,17 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+  security_rule {
+    name                       = "http_8080"
+    priority                   = 140
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "8080"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 }
 
 resource "azurerm_subnet_network_security_group_association" "nsg_association" {
@@ -58,7 +69,7 @@ resource "azurerm_public_ip" "linux_server_pip" {
   location            = azurerm_resource_group.appgw.location
   allocation_method   = "Static"
   sku                 = "Standard"
-  availability_zone   = "No-Zone"
+
 }
 
 resource "azurerm_network_interface" "linux_server_nic" {
@@ -102,53 +113,53 @@ resource "azurerm_linux_virtual_machine" "linux_server" {
   }
 }
 
-# linux Server 02
-resource "azurerm_public_ip" "linux_server_pip_02" {
-  name                = "${var.prefix}-linux-server-pip-02"
-  resource_group_name = azurerm_resource_group.appgw.name
-  location            = azurerm_resource_group.appgw.location
-  allocation_method   = "Static"
-  sku                 = "Standard"
-  availability_zone   = "No-Zone"
-}
+# # linux Server 02
+# resource "azurerm_public_ip" "linux_server_pip_02" {
+#   name                = "${var.prefix}-linux-server-pip-02"
+#   resource_group_name = azurerm_resource_group.appgw.name
+#   location            = azurerm_resource_group.appgw.location
+#   allocation_method   = "Static"
+#   sku                 = "Standard"
+# 
+# }
 
-resource "azurerm_network_interface" "linux_server_nic_02" {
-  name                = "${var.prefix}-linux-server-nic-02"
-  resource_group_name = azurerm_resource_group.appgw.name
-  location            = azurerm_resource_group.appgw.location
+# resource "azurerm_network_interface" "linux_server_nic_02" {
+#   name                = "${var.prefix}-linux-server-nic-02"
+#   resource_group_name = azurerm_resource_group.appgw.name
+#   location            = azurerm_resource_group.appgw.location
 
-  ip_configuration {
-    name                          = "${var.prefix}-linux-server-nic-ip-config-02"
-    subnet_id                     = azurerm_subnet.backend.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.linux_server_pip_02.id
-  }
-}
+#   ip_configuration {
+#     name                          = "${var.prefix}-linux-server-nic-ip-config-02"
+#     subnet_id                     = azurerm_subnet.backend.id
+#     private_ip_address_allocation = "Dynamic"
+#     public_ip_address_id          = azurerm_public_ip.linux_server_pip_02.id
+#   }
+# }
 
-resource "azurerm_linux_virtual_machine" "linux_server_02" {
-  name                = "${var.prefix}-linux-server-02"
-  resource_group_name = azurerm_resource_group.appgw.name
-  location            = azurerm_resource_group.appgw.location
-  size                = "Standard_F4s_v2"
-  availability_set_id = azurerm_availability_set.appgw.id
+# resource "azurerm_linux_virtual_machine" "linux_server_02" {
+#   name                = "${var.prefix}-linux-server-02"
+#   resource_group_name = azurerm_resource_group.appgw.name
+#   location            = azurerm_resource_group.appgw.location
+#   size                = "Standard_F4s_v2"
+#   availability_set_id = azurerm_availability_set.appgw.id
 
-  network_interface_ids = [
-    azurerm_network_interface.linux_server_nic_02.id,
-  ]
+#   network_interface_ids = [
+#     azurerm_network_interface.linux_server_nic_02.id,
+#   ]
 
-  admin_username                  = var.admin_username
-  admin_password                  = var.admin_password
-  disable_password_authentication = false
+#   admin_username                  = var.admin_username
+#   admin_password                  = var.admin_password
+#   disable_password_authentication = false
 
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
+#   os_disk {
+#     caching              = "ReadWrite"
+#     storage_account_type = "Standard_LRS"
+#   }
 
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
-  }
-}
+#   source_image_reference {
+#     publisher = "Canonical"
+#     offer     = "UbuntuServer"
+#     sku       = "18.04-LTS"
+#     version   = "latest"
+#   }
+# }

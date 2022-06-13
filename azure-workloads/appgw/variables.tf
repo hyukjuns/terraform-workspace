@@ -1,11 +1,11 @@
 # Optional
 variable "prefix" {
     description = "prefix"
-    default = ""
+    default = "tf"
 }
 variable "suffix" {
     description = "suffix"
-    default = ""
+    default = "tf-test"
 }
 variable "location" {
     description = "location"
@@ -13,10 +13,18 @@ variable "location" {
 }
 variable "admin_username" {
     description = "vm admin username"
-    default = "az"
+    default = "azureuser"
 }
 
 # Required
 variable "admin_password" {
-    description = "vm admin username"
+    description = "vm admin passowrd"
+}
+
+variable "agw_host_name" {
+  description = " agw listener multisite hostname"
+}
+
+variable "agw_backend_hostname" {
+  description = "agw_backend_hostname"
 }
