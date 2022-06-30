@@ -1,4 +1,4 @@
-resource "azurerm_network_security_group" "nsg" {
+resource "azurerm_network_security_group" "backend" {
   name                = "${var.prefix}-nsg"
   location            = azurerm_resource_group.appgw.location
   resource_group_name = azurerm_resource_group.appgw.name
@@ -49,21 +49,21 @@ resource "azurerm_network_security_group" "nsg" {
   }
 }
 
-resource "azurerm_subnet_network_security_group_association" "nsg_association" {
-  subnet_id                 = azurerm_subnet.backend.id
-  network_security_group_id = azurerm_network_security_group.nsg.id
+resource "azurerm_subnet_network_security_group_association" "backend" {
+  subnet_id                 = azurerm_subnet.appgw.id
+  network_security_group_id = azurerm_network_security_group.backend.id
 }
 
-resource "azurerm_availability_set" "appgw" {
-  name                = "${var.prefix}-appgw-avset"
-  location            = azurerm_resource_group.appgw.location
-  resource_group_name = azurerm_resource_group.appgw.name
-  platform_fault_domain_count = 2
+resource "azurerm_availability_set" "backend" {
+  name                         = "${var.prefix}-appgw-avset"
+  location                     = azurerm_resource_group.appgw.location
+  resource_group_name          = azurerm_resource_group.appgw.name
+  platform_fault_domain_count  = 2
   platform_update_domain_count = 5
 }
 
 # linux Server 01
-resource "azurerm_public_ip" "linux_server_pip" {
+resource "azurerm_public_ip" "backend" {
   name                = "${var.prefix}-linux-server-pip"
   resource_group_name = azurerm_resource_group.appgw.name
   location            = azurerm_resource_group.appgw.location
@@ -72,16 +72,16 @@ resource "azurerm_public_ip" "linux_server_pip" {
 
 }
 
-resource "azurerm_network_interface" "linux_server_nic" {
+resource "azurerm_network_interface" "backend" {
   name                = "${var.prefix}-linux-server-nic"
   resource_group_name = azurerm_resource_group.appgw.name
   location            = azurerm_resource_group.appgw.location
 
   ip_configuration {
-    name                          = "${var.prefix}-linux-server-nic-ip-config"
-    subnet_id                     = azurerm_subnet.backend.id
+    name                          = "${var.prefix}-linux-server-ip-config"
+    subnet_id                     = azurerm_subnet.workload.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.linux_server_pip.id
+    public_ip_address_id          = azurerm_public_ip.backend.id
   }
 }
 
@@ -89,11 +89,11 @@ resource "azurerm_linux_virtual_machine" "linux_server" {
   name                = "${var.prefix}-linux-server"
   resource_group_name = azurerm_resource_group.appgw.name
   location            = azurerm_resource_group.appgw.location
-  size                = "Standard_F4s_v2"
-  availability_set_id = azurerm_availability_set.appgw.id
+  size                = "Standard_B2s"
+  availability_set_id = azurerm_availability_set.backend.id
 
   network_interface_ids = [
-    azurerm_network_interface.linux_server_nic.id,
+    azurerm_network_interface.backend.id,
   ]
 
   admin_username                  = var.admin_username
@@ -112,54 +112,3 @@ resource "azurerm_linux_virtual_machine" "linux_server" {
     version   = "latest"
   }
 }
-
-# # linux Server 02
-# resource "azurerm_public_ip" "linux_server_pip_02" {
-#   name                = "${var.prefix}-linux-server-pip-02"
-#   resource_group_name = azurerm_resource_group.appgw.name
-#   location            = azurerm_resource_group.appgw.location
-#   allocation_method   = "Static"
-#   sku                 = "Standard"
-# 
-# }
-
-# resource "azurerm_network_interface" "linux_server_nic_02" {
-#   name                = "${var.prefix}-linux-server-nic-02"
-#   resource_group_name = azurerm_resource_group.appgw.name
-#   location            = azurerm_resource_group.appgw.location
-
-#   ip_configuration {
-#     name                          = "${var.prefix}-linux-server-nic-ip-config-02"
-#     subnet_id                     = azurerm_subnet.backend.id
-#     private_ip_address_allocation = "Dynamic"
-#     public_ip_address_id          = azurerm_public_ip.linux_server_pip_02.id
-#   }
-# }
-
-# resource "azurerm_linux_virtual_machine" "linux_server_02" {
-#   name                = "${var.prefix}-linux-server-02"
-#   resource_group_name = azurerm_resource_group.appgw.name
-#   location            = azurerm_resource_group.appgw.location
-#   size                = "Standard_F4s_v2"
-#   availability_set_id = azurerm_availability_set.appgw.id
-
-#   network_interface_ids = [
-#     azurerm_network_interface.linux_server_nic_02.id,
-#   ]
-
-#   admin_username                  = var.admin_username
-#   admin_password                  = var.admin_password
-#   disable_password_authentication = false
-
-#   os_disk {
-#     caching              = "ReadWrite"
-#     storage_account_type = "Standard_LRS"
-#   }
-
-#   source_image_reference {
-#     publisher = "Canonical"
-#     offer     = "UbuntuServer"
-#     sku       = "18.04-LTS"
-#     version   = "latest"
-#   }
-# }

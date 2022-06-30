@@ -11,27 +11,28 @@ provider "azurerm" {
   # Configuration options
   features {}
 }
+
 resource "azurerm_resource_group" "appgw" {
-  name     = "rg-${var.suffix}"
+  name     = "${var.prefix}-appgw-rg"
   location = var.location
 }
 
 resource "azurerm_virtual_network" "appgw" {
-  name                = "${var.prefix}-network"
+  name                = "${var.prefix}-appgw-network"
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.appgw.location
   resource_group_name = azurerm_resource_group.appgw.name
 }
 
-resource "azurerm_subnet" "frontend" {
-  name                 = "frontend"
+resource "azurerm_subnet" "appgw" {
+  name                 = "agw-sn"
   resource_group_name  = azurerm_resource_group.appgw.name
   virtual_network_name = azurerm_virtual_network.appgw.name
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-resource "azurerm_subnet" "backend" {
-  name                 = "backend"
+resource "azurerm_subnet" "workload" {
+  name                 = "workload-sn"
   resource_group_name  = azurerm_resource_group.appgw.name
   virtual_network_name = azurerm_virtual_network.appgw.name
   address_prefixes     = ["10.0.2.0/24"]
@@ -47,16 +48,16 @@ resource "azurerm_public_ip" "appgw" {
 
 # since these variables are re-used - a locals block makes this more maintainable
 locals {
-  backend_address_pool_name      = "${azurerm_virtual_network.appgw.name}-backendpool"
-  frontend_port_name             = "${azurerm_virtual_network.appgw.name}-feport"
-  frontend_ip_configuration_name = "${azurerm_virtual_network.appgw.name}-feip"
-  http_setting_name              = "${azurerm_virtual_network.appgw.name}-behtst"
-  listener_name                  = "${azurerm_virtual_network.appgw.name}-listener-http"
-  request_routing_rule_name      = "${azurerm_virtual_network.appgw.name}-rule"
+  backend_address_pool_name      = "bepool"
+  frontend_port_name             = "feport"
+  frontend_ip_configuration_name = "feip"
+  http_setting_name              = "besetting"
+  listener_name                  = "http-listener"
+  request_routing_rule_name      = "rt-rule"
 }
 
 resource "azurerm_application_gateway" "appgw" {
-  name                = "${var.prefix}-appgateway"
+  name                = "${var.prefix}-appgw"
   resource_group_name = azurerm_resource_group.appgw.name
   location            = azurerm_resource_group.appgw.location
 
@@ -67,8 +68,8 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   gateway_ip_configuration {
-    name      = "${var.prefix}-gateway-ip-configuration"
-    subnet_id = azurerm_subnet.frontend.id
+    name      = "${var.prefix}-appgw-ip-configuration"
+    subnet_id = azurerm_subnet.appgw.id
   }
 
   frontend_port {
@@ -89,16 +90,14 @@ resource "azurerm_application_gateway" "appgw" {
   backend_http_settings {
     name                  = local.http_setting_name
     protocol              = "Http"
-    port                  = 8080
+    port                  = 80
     cookie_based_affinity = "Enabled"
-    affinity_cookie_name = "ApplicationGatewayAffinity"
+    affinity_cookie_name  = "ApplicationGatewayAffinity"
+    request_timeout       = 120
     connection_draining {
-      enabled = true
+      enabled           = true
       drain_timeout_sec = 60
     }
-    request_timeout       = 120
-    path = "/"  
-    host_name = var.agw_backend_hostname
   }
 
   http_listener {
@@ -106,7 +105,6 @@ resource "azurerm_application_gateway" "appgw" {
     frontend_ip_configuration_name = local.frontend_ip_configuration_name
     frontend_port_name             = local.frontend_port_name
     protocol                       = "Http"
-    host_name = var.agw_host_name
   }
 
   request_routing_rule {
@@ -115,6 +113,6 @@ resource "azurerm_application_gateway" "appgw" {
     http_listener_name         = local.listener_name
     backend_address_pool_name  = local.backend_address_pool_name
     backend_http_settings_name = local.http_setting_name
-    priority = 1
+    priority                   = 1
   }
 }
